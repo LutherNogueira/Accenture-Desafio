@@ -1,6 +1,8 @@
 from src.services.ServiceDados import ServiceDados
 from src.services.ServiceODBC import ServiceODBC
 
+dict_tabelas = []
+
 while True:
     print("1 - Testar conexão com banco de dados")
     print("2 - Criar estruturas de tabela no banco de dados")
