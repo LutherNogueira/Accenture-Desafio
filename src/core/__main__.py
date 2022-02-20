@@ -1,7 +1,7 @@
-from src.core.services.ServiceDados import ServiceDados
-from src.core.services.ServiceODBC import ServiceODBC
+from services.ServicoODBC import ServiceODBC
 
 if __name__ == "__main__":
+    
     dict_tabelas = []
 
     while True:
