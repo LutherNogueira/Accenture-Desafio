@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from sqlite3 import Date
-from Cliente import Cliente
+from src.core.models.Cliente import Cliente
 
 @dataclass
 class Transacao:

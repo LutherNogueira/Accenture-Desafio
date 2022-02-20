@@ -64,7 +64,7 @@ class ServiceODBC():
     def deleteAllTables(tableName):
         try:
             
-            tables = [tableName]
+            tables = ["TRANSACOES","CLIENTES"]
             
             for item in tables:
                 

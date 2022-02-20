@@ -2,8 +2,11 @@ from src.core.services.ServiceDados import ServiceDados
 from src.core.services.ServiceODBC import ServiceODBC
 
 if __name__ == "__main__":
-    dict_tabelas = []
+    dict_tabelas = {}
 
+    dict_tabelas["clientes"] = []
+    dict_tabelas["transacoes"] = []
+    
     while True:
         print("1 - Testar conexão com banco de dados")
         print("2 - Criar estruturas de tabela no banco de dados")
