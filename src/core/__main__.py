@@ -1,5 +1,4 @@
-from core.services.ServiceDados import ServiceDados
-from core.services.ServiceODBC import ServiceODBC
+from services.ServicoODBC import ServiceODBC
 
 if __name__ == "__main__":
     
