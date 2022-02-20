@@ -22,6 +22,18 @@ class ServiceODBC():
             return cursor, conn
         except pyodbc.Error as e:
             print(f"Erro ao conectar ao banco de dados : {str(e)}")
+
+    @staticmethod       
+    def justConection():
+        try:
+            conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};  \
+                                SERVER='+ServiceODBC.server + ';             \
+                                DATABASE='+ServiceODBC.database+';            \
+                                UID='+ServiceODBC.username+';                  \
+                                PWD=' + ServiceODBC.password)
+            return conn
+        except pyodbc.Error as e:
+            print(f"Erro ao conectar ao banco de dados : {str(e)}")
             
     @staticmethod
     def closeConection(cursor: pyodbc.Cursor, conn: pyodbc.Connection):
