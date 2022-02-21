@@ -1,7 +1,7 @@
 from typing import List
-from src.core.models.Transacao import Transacao
+from models.Transacao import Transacao
 from pandas import DataFrame
-from src.core.services.ServiceODBC import ServiceODBC
+from services.ServiceODBC import ServiceODBC
 from pyodbc import Error
 
 
@@ -51,7 +51,7 @@ class ServiceTransacao:
 
                     )
                 '''
-                cursor, conn = ServiceODBC.openConection()
+                cursor, conn = ServiceODBC.openConnection()
                 
                 cursor.execute(comando_sql)
                 conn.commit()
@@ -70,7 +70,7 @@ class ServiceTransacao:
                 INSERT INTO TRANSACAO (ID, CLIENTE_ID, VALOR, DATA)
                 VALUES(?,?,?,?)
             '''
-            cursor, conn = ServiceODBC.openConection()
+            cursor, conn = ServiceODBC.openConnection()
 
             for transacao in listaTransacao:
                 values = (transacao.id, transacao.id_cliente.id, transacao.valor, transacao.data)

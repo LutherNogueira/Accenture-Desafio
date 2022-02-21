@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from pandas import Timestamp as pd
-from src.core.models.Cliente import Cliente
+from models.Cliente import Cliente
 
 @dataclass
 class Transacao:
