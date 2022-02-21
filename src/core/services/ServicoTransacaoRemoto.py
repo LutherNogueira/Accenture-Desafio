@@ -1,7 +1,7 @@
 from typing import Iterable
 from models.Transacao import Transacao
 from services.ServicoTransacaoLocal import ServicoTransacaoLocal
-from services.ServiceODBC import ServiceODBC
+from services.ServicoODBC import ServiceODBC
 
 class ServicoTransacaoRemoto(ServicoTransacaoLocal):
     def __init__(self,conexao,tabela='TRANSACOES'):

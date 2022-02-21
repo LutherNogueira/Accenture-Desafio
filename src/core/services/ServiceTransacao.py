@@ -1,7 +1,7 @@
 from typing import List
 from models.Transacao import Transacao
 from pandas import DataFrame
-from services.ServiceODBC import ServiceODBC
+from services.ServicoODBC import ServiceODBC
 from pyodbc import Error
 
 

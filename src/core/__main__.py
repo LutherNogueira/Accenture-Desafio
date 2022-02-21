@@ -1,5 +1,5 @@
 from services.ServiceDados import ServiceDados
-from services.ServiceODBC import ServiceODBC
+from services.ServicoODBC import ServiceODBC
 
 if __name__ == "__main__":
     dict_tabelas = {}
