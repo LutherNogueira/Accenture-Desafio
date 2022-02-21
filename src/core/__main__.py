@@ -35,7 +35,7 @@ if __name__ == "__main__":
                 ServiceODBC.dropAllTables()
                 print()
             case 4:  # Carregar dados do CSV
-                ServiceDados.carregarDoCSV()
+                dict_tabelas = ServiceDados.carregarDoCSV()
                 print()
             case 5:  # Apagar dados carregados
                 dict_tabelas = ServiceDados.apagarDadosCarregados(dict_tabelas)

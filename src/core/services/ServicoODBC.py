@@ -21,19 +21,7 @@ class ServiceODBC():
             return conn
         except pyodbc.Error as e:
             print(f"Erro ao conectar ao banco de dados : {str(e)}")
-
-    @staticmethod       
-    def justConection():
-        try:
-            conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};  \
-                                SERVER='+ServiceODBC.server + ';             \
-                                DATABASE='+ServiceODBC.database+';            \
-                                UID='+ServiceODBC.username+';                  \
-                                PWD=' + ServiceODBC.password)
-            return conn
-        except pyodbc.Error as e:
-            print(f"Erro ao conectar ao banco de dados : {str(e)}")
-            
+  
     @staticmethod
     def closeConnection(cursor: pyodbc.Cursor, conn: pyodbc.Connection):
         cursor.close()
@@ -51,7 +39,7 @@ class ServiceODBC():
                 if ServiceODBC.checkIfTableExists(item):
 
                     sqlcommand=f''' 
-                        DROP TABLE IF EXISTS {item} CASCADE; 
+                        DROP TABLE IF EXISTS {item}; 
                     '''
                     conn =ServiceODBC.openConnection()
                     conn.cursor().execute(sqlcommand)
@@ -82,7 +70,7 @@ class ServiceODBC():
                 if ServiceODBC.checkIfTableExists(item):
 
                     sqlcommand=f''' 
-                        DELETE FROM {item} CASCADE; 
+                        DELETE FROM {item}; 
                     '''
                     cursor, conn = ServiceODBC.openConnection()
                     cursor.execute(sqlcommand)
@@ -125,8 +113,8 @@ class ServiceODBC():
                 AND TABLE_NAME = '{table_name}'; 
             '''
 
-            conn.cursor().execute(sqlcommand)
-            if conn.cursor().rowcount == -1:
+            r = conn.cursor().execute(sqlcommand)
+            if r.fetchone() is None:
                 conn.close()
                 return False
             else: 

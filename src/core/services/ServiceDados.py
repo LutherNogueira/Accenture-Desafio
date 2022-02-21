@@ -18,17 +18,16 @@ class ServiceDados:
     @staticmethod
     def carregarDoCSV():
 
-        # clientes_csv = ServicePandas.readDataCliente()
-        # cliente_local = ServicoClienteLocal(clientes_csv)
+        clientes_csv = ServicePandas.readDataCliente()
+        cliente_local = ServicoClienteLocal(clientes_csv)
         
-        # cliente_remoto = ServicoClienteRemoto(ServiceODBC.openConnection())
-        # ServiceDados.migracaoCliente(cliente_local,cliente_remoto)
-
         transacao_csv = ServicePandas.readDataTransacao()
         transacao_local = ServicoTransacaoLocal(transacao_csv)
-        transacao_remoto = ServicoTransacaoRemoto(ServiceODBC.openConnection())
-        transacao_remoto.createTable()
-        ServiceDados.migracaoTransacao(transacao_local,transacao_remoto)
+
+        dict_tabelas = {}
+
+        dict_tabelas["clientes"] = cliente_local
+        dict_tabelas["transacoes"] = transacao_local
            
     def migracaoCliente(de:ServicoCliente,para:ServicoCliente):
         clientes = de.ler()
@@ -40,8 +39,8 @@ class ServiceDados:
 
     @staticmethod
     def apagarDadosCarregados(dict_tabelas):
-        dict_tabelas['clientes'] = []
-        dict_tabelas['transacoes'] = []
+        dict_tabelas['clientes'] = None
+        dict_tabelas['transacoes'] = None
 
         return dict_tabelas
 
@@ -54,8 +53,12 @@ class ServiceDados:
 
     @staticmethod
     def criarTabelasDB():
-        ServicoClienteRemoto.createTable()
-        ServicoTransacaoRemoto.createTable()
+        
+        cliente_remoto = ServicoClienteRemoto(ServiceODBC.openConnection())
+        cliente_remoto.createTable()
+
+        transacao_remoto = ServicoTransacaoRemoto(ServiceODBC.openConnection())
+        transacao_remoto.createTable()
 
     @staticmethod
     def dropAllTables():
@@ -64,8 +67,12 @@ class ServiceDados:
     @staticmethod
     def inserirNasTabelasDB(dict_tabelas):
 
-        ServicoClienteRemoto.insert(dict_tabelas['clientes'])
-        ServicoTransacaoRemoto.insert(dict_tabelas['transacoes'])
+        cliente_remoto = ServicoClienteRemoto(ServiceODBC.openConnection())
+        ServiceDados.migracaoCliente(dict_tabelas['clientes'],cliente_remoto)
+
+
+        transacao_remoto = ServicoTransacaoRemoto(ServiceODBC.openConnection())
+        ServiceDados.migracaoTransacao(dict_tabelas['transacoes'],transacao_remoto)
 
     @staticmethod
     def SumarizarDB():
@@ -83,7 +90,7 @@ class ServiceDados:
 
                     print(f'Na tabela {item} temos {linha.QTD} registros')
                 else:
-                    print("Tabela {item} não existe no banco de dados")
+                    print(f"Tabela {item} não existe no banco de dados")
 
         except Error as e:
             print(f"Erro ao sumarizar dados do banco de dados : {str(e)}")
