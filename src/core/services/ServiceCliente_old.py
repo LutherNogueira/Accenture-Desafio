@@ -1,7 +1,7 @@
 from typing import List
 from pandas import DataFrame
-from src.core.models.Cliente import Cliente
-from src.core.services.ServiceODBC import ServiceODBC
+from models.Cliente import Cliente
+from services.ServiceODBC import ServiceODBC
 from pyodbc import Error
 
 class ServiceCliente:

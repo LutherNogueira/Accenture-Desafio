@@ -1,10 +1,9 @@
-
 import csv
 from typing import Callable, Iterable
-from models.Cliente import Cliente
-from services.ServicoCliente import ServicoCliente
+from models.Transacao import Transacao
+from services.ServicoTransacao import ServicoTransacao
 
-class ServicoClienteLocal(ServicoCliente):
+class ServicoTransacaoLocal(ServicoTransacao):
     def __init__(self,arquivo):
         self.arquivo = arquivo
 
@@ -12,7 +11,7 @@ class ServicoClienteLocal(ServicoCliente):
         with open(self.arquivo,'r',encoding='utf-8') as dado:
             for linha in csv.DictReader(dado,delimiter=';',quoting=csv.QUOTE_NONE):
                 try:
-                    cliente=Cliente.dadoBruto(linha)
-                    yield cliente
+                    transacao=Transacao.dadoBruto(linha)
+                    yield transacao
                 except Exception as erro:
                     raise Exception(f'Erro na linha => {linha} ',erro)

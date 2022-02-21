@@ -11,15 +11,14 @@ class ServiceODBC():
     password =os.getenv('PASSWORD')
 
     @staticmethod
-    def openConection():
+    def openConnection():
         try:
             conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};  \
                                 SERVER='+ServiceODBC.server + ';             \
                                 DATABASE='+ServiceODBC.database+';            \
                                 UID='+ServiceODBC.username+';                  \
                                 PWD=' + ServiceODBC.password)
-            cursor = conn.cursor()
-            return cursor, conn
+            return conn
         except pyodbc.Error as e:
             print(f"Erro ao conectar ao banco de dados : {str(e)}")
             
@@ -29,10 +28,11 @@ class ServiceODBC():
         conn.close()
 
     @staticmethod
-    def dropAllTables(tableName):
+    def dropAllTables():
         try:
             
-            tables = [tableName]
+            tables = ["TRANSACOES","CLIENTES"]
+
             
             for item in tables:
                 
@@ -41,10 +41,9 @@ class ServiceODBC():
                     sqlcommand=f''' 
                         DROP TABLE IF EXISTS {item} CASCADE; 
                     '''
-                    cursor, conn =ServiceODBC.openConection()
-                    cursor.execute(sqlcommand)
+                    conn =ServiceODBC.openConection()
+                    conn.cursor().execute(sqlcommand)
                     conn.commit()
-                    cursor.close()
                     conn.close()
 
                     print(f'Tabela {item} foi apagada com sucesso!' )
@@ -104,7 +103,7 @@ class ServiceODBC():
 
     def checkIfTableExists(table_name):
         try:
-            cursor, conn =ServiceODBC.openConection()
+            conn =ServiceODBC.openConnection()
             
             sqlcommand=f''' 
                 SELECT *
@@ -113,13 +112,11 @@ class ServiceODBC():
                 AND TABLE_NAME = '{table_name}'; 
             '''
 
-            cursor.execute(sqlcommand)
-            if cursor.rowcount == 0:
-                cursor.close()
+            conn.cursor().execute(sqlcommand)
+            if conn.cursor().rowcount == -1:
                 conn.close()
                 return False
             else: 
-                cursor.close()
                 conn.close()
                 return True
             

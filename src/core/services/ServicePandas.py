@@ -5,11 +5,11 @@ from os.path import exists
 
 class ServicePandas:
 
-    path = os.path.abspath("src\\db")
+    path = os.path.abspath("..\..\src\\db")
     @staticmethod
-    def readDataTransation():
+    def readDataTransacao():
         for i in range(1, 10):
-            caminho = f"{path}\\arquivos_carga_csv\\transaction-in-{i:03d}.csv"
+            caminho = f"{ServicePandas.path}\\transaction-in-{i:03d}.csv"
 
             if i == 1:
                 temp = pd.read_csv(caminho, header=0,
@@ -17,14 +17,14 @@ class ServicePandas:
                 df_transacao = temp
 
             else:
-                col_name = df.columns
+                col_name = df_transacao.columns
                 temp = pd.read_csv(caminho, header=None,
                                     keep_default_na=False, sep=";", names=col_name)
                 df_transacao = pd.concat([temp, df_transacao])
 
 
         for i in range(1, 64):
-            caminho = f"{path}\\arquivos_carga_csv\\transaction-out-{i:03d}.csv"
+            caminho = f"{ServicePandas.path}\\transaction-out-{i:03d}.csv"
             col_name = df_transacao.columns
             if i == 1:
                 temp = pd.read_csv(caminho, header=None, skiprows=1, keep_default_na=False, sep=";", names=col_name)
@@ -35,11 +35,12 @@ class ServicePandas:
                                 keep_default_na=False, sep=";", names=col_name)
                 df_transacao = pd.concat([temp, df_transacao])
         df_transacao.reset_index()
-        return df_transacao
+        df_transacao.to_csv(f"{ServicePandas.path}\\compilado_transacoes.csv",index=False, sep=";")
+        return f"{ServicePandas.path}\\compilado_transacoes.csv"
 
     def readDataCliente():
         for i in range(1, 5):
-            caminho = f"{path}\\arquivos_carga_csv\\clients-{i:03d}.csv"
+            caminho = f"{ServicePandas.path}\\clients-{i:03d}.csv"
             if i == 1:
                 temp = pd.read_csv(caminho, header=0,
                                 keep_default_na=False, sep=";")
@@ -52,7 +53,8 @@ class ServicePandas:
                 df_cliente = pd.concat([temp, df_cliente])
 
         df_cliente.reset_index()
-        return df_cliente.to_csv(index=False)
+        df_cliente.to_csv(f"{ServicePandas.path}\\compilado_clientes.csv",index=False, sep=";")
+        return f"{ServicePandas.path}\\compilado_clientes.csv"
 
 
 '''

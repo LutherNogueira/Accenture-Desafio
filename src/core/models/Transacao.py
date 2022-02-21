@@ -6,7 +6,7 @@ from src.core.models.Cliente import Cliente
 @dataclass
 class Transacao:
     id: int
-    id_cliente: Cliente
+    cliente_id: int
     valor: float
     data: datetime
 
@@ -16,5 +16,5 @@ class Transacao:
             id=dado['id'],
             cliente_id=dado['cliente_id'],
             valor=dado['valor'],
-            data_cadastro= str(pd(dado['data_cadastro']).to_pydatetime()),
+            data= str(pd(dado['data']).to_pydatetime()),
         )

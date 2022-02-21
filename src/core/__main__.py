@@ -32,11 +32,11 @@ if __name__ == "__main__":
             case 3: # Apagar todos as tabelas do Banco de dados
                 ServiceODBC.dropAllTables()
             case 4:  # Carregar dados do CSV
-                dict_tabelas = ServiceDados.carregarDoCSV()
+                ServiceDados.carregarDoCSV()
             case 5:  # Apagar dados carregados
                 dict_tabelas = ServiceDados.apagarDadosCarregados(dict_tabelas)
             case 6:  # Sumarizar dados carregados
-                ServiceDados.Sumarizar(dict_tabelas)
+                ServiceDados.Sumarizar()
             case 7:  # Inserir no banco de dados os dados carregados
                 ServiceDados.inserirNasTabelasDB(dict_tabelas)
             case 8:  # Sumarizar dados salvos no Banco de dados

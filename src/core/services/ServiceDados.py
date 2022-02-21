@@ -1,10 +1,14 @@
 from glob import glob
-from src.core.services.ServicoClienteLocal import ServicoClienteLocal
-from src.core.services.ServiceTransacao import ServiceTransacao
-from src.core.services.ServiceODBC import ServiceODBC
-from src.core.services.ServicoClienteRemoto import ServicoClienteRemoto
-from src.core.services.ServicePandas import ServicePandas
-from src.core.services.ServicoCliente import ServicoCliente
+from services.ServicoClienteLocal import ServicoClienteLocal
+from services.ServiceTransacao import ServiceTransacao
+from services.ServiceODBC import ServiceODBC
+from services.ServicoClienteRemoto import ServicoClienteRemoto
+from services.ServicePandas import ServicePandas
+from services.ServicoCliente import ServicoCliente
+from services.ServicoTransacao import ServicoTransacao
+from services.ServicoTransacaoLocal import ServicoTransacaoLocal
+from services.ServicoTransacaoRemoto import ServicoTransacaoRemoto
+
 from pyodbc import Error
 
 import pandas as pd
@@ -15,18 +19,25 @@ class ServiceDados:
     @staticmethod
     def carregarDoCSV():
 
-        clientes_csv = ServicePandas.readDataCliente()
-        cliente_local = ServicoClienteLocal(clientes_csv)
+        # clientes_csv = ServicePandas.readDataCliente()
+        # cliente_local = ServicoClienteLocal(clientes_csv)
         
-        cliente_remoto = ServicoClienteRemoto(ServiceODBC.justConection())
-        ServiceDados.migracao(cliente_local,cliente_remoto)
-       
+        # cliente_remoto = ServicoClienteRemoto(ServiceODBC.openConnection())
+        # ServiceDados.migracaoCliente(cliente_local,cliente_remoto)
 
-        return dict_tabelas
-    
-    def migracao(de:ServicoCliente,para:ServicoCliente):
+        transacao_csv = ServicePandas.readDataTransacao()
+        transacao_local = ServicoTransacaoLocal(transacao_csv)
+        transacao_remoto = ServicoTransacaoRemoto(ServiceODBC.openConnection())
+        transacao_remoto.createTable()
+        ServiceDados.migracaoTransacao(transacao_local,transacao_remoto)
+           
+    def migracaoCliente(de:ServicoCliente,para:ServicoCliente):
         clientes = de.ler()
         para.escrever(clientes)
+    
+    def migracaoTransacao(de:ServicoTransacao,para:ServicoTransacao):
+        transacoes = de.ler()
+        para.escrever(transacoes)
 
     @staticmethod
     def apagarDadosCarregados(dict_tabelas):
@@ -62,14 +73,14 @@ class ServiceDados:
         tabelas = ['CLIENTES', 'TRANSACOES']
 
         try:
-            cursor, conn = ServiceODBC.openConection()
+            conn = ServiceODBC.openConnection()
 
             for item in tabelas:
                 if ServiceODBC.checkIfTableExists(item):
-                    comando_sql = "SELECT COUNT(ID) QTD FROM {item} "
-                    cursor.execute(comando_sql)
+                    comando_sql = "SELECT id as QTD FROM {item};"
+                    conn.cursor().execute(comando_sql)
 
-                    linha = cursor.fetchone()
+                    linha = conn.cursor().fetchone()
 
                     print(f'Na tabela {item} temos {linha.QTD} registros')
                 else:

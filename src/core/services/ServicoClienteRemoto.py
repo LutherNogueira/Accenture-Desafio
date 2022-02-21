@@ -1,14 +1,14 @@
 from distutils import core
 from typing import Iterable
-from src.core.models.Cliente import Cliente
-from src.core.services.ServicoCliente import ServicoClienteLocal
+from models.Cliente import Cliente
+from services.ServicoClienteLocal import ServicoClienteLocal
 
 class ServicoClienteRemoto(ServicoClienteLocal):
     def __init__(self,conexao,tabela='CLIENTES'):
         self.conexao = conexao
         self.tabela = tabela
     
-    def createTable(self,cliente:Cliente):
+    def createTable(self):
         cursor = self.conexao.cursor()
         cursor.execute(
             f'''
@@ -18,9 +18,9 @@ class ServicoClienteRemoto(ServicoClienteLocal):
                 EMAIL VARCHAR(100),
                 DATA_CADASTRO DATETIMEOFFSET,
                 TELEFONE VARCHAR(20)
-            )''',
-            [cliente.id,cliente.nome,cliente.email,cliente.data_cadastro,cliente.telefone]
+            )'''
         )
+        self.conexao.commit()
         cursor.close()
 
     def insert(self,cliente:Cliente):
