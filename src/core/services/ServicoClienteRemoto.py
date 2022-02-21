@@ -45,7 +45,7 @@ class ServicoClienteRemoto(ServicoClienteLocal):
                 [cliente.id,cliente.nome,cliente.email,cliente.data_cadastro,cliente.telefone]
             )
             cursor.close()
-            print("Cliente: {cliente} inserido com sucesso no banco de dados")
+            print(f"Cliente: {cliente.nome} inserido com sucesso no banco de dados")
         except Error as e:
             print(f"Erro ao inserir {cliente} no banco de dados : {str(e)}")
         except OSError as err:

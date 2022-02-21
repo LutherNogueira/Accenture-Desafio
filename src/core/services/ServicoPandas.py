@@ -8,110 +8,70 @@ class ServicePandas:
     path = os.path.abspath("..\..\src\\db")
     @staticmethod
     def readDataTransacao():
-        for i in range(1, 10):
-            caminho = f"{ServicePandas.path}\\transaction-in-{i:03d}.csv"
+        try: 
+            for i in range(1, 10):
+                caminho = f"{ServicePandas.path}\\transaction-in-{i:03d}.csv"
 
-            if i == 1:
-                temp = pd.read_csv(caminho, header=0,
-                                    keep_default_na=False, sep=";")
-                df_transacao = temp
+                if i == 1:
+                    temp = pd.read_csv(caminho, header=0,
+                                        keep_default_na=False, sep=";")
+                    df_transacao = temp
 
-            else:
+                else:
+                    col_name = df_transacao.columns
+                    temp = pd.read_csv(caminho, header=None,
+                                        keep_default_na=False, sep=";", names=col_name)
+                    df_transacao = pd.concat([temp, df_transacao])
+
+
+            for i in range(1, 64):
+                caminho = f"{ServicePandas.path}\\transaction-out-{i:03d}.csv"
                 col_name = df_transacao.columns
-                temp = pd.read_csv(caminho, header=None,
+                if i == 1:
+                    temp = pd.read_csv(caminho, header=None, skiprows=1, keep_default_na=False, sep=";", names=col_name)
+
+                else:
+                    col_name = df_transacao.columns
+                    temp = pd.read_csv(caminho, header=None,
                                     keep_default_na=False, sep=";", names=col_name)
-                df_transacao = pd.concat([temp, df_transacao])
+                    df_transacao = pd.concat([temp, df_transacao])
+            df_transacao.reset_index()
+            df_transacao.to_csv(f"{ServicePandas.path}\\compilado_transacoes.csv",index=False, sep=";")
 
+            print("Arquivo compilado de transações criado com sucesso")
 
-        for i in range(1, 64):
-            caminho = f"{ServicePandas.path}\\transaction-out-{i:03d}.csv"
-            col_name = df_transacao.columns
-            if i == 1:
-                temp = pd.read_csv(caminho, header=None, skiprows=1, keep_default_na=False, sep=";", names=col_name)
-
-            else:
-                col_name = df_transacao.columns
-                temp = pd.read_csv(caminho, header=None,
-                                keep_default_na=False, sep=";", names=col_name)
-                df_transacao = pd.concat([temp, df_transacao])
-        df_transacao.reset_index()
-        df_transacao.to_csv(f"{ServicePandas.path}\\compilado_transacoes.csv",index=False, sep=";")
-        return f"{ServicePandas.path}\\compilado_transacoes.csv"
+            return f"{ServicePandas.path}\\compilado_transacoes.csv"
+        except OSError as err:
+            print("Erro de Sistema Operacional: {0}".format(err))
+        except ValueError:
+            print("Não foi possível fazer a conversão de tipo")
+        except BaseException as err:
+            print(f"Erro inesperado {err=}, {type(err)=}")
 
     def readDataCliente():
-        for i in range(1, 5):
-            caminho = f"{ServicePandas.path}\\clients-{i:03d}.csv"
-            if i == 1:
-                temp = pd.read_csv(caminho, header=0,
-                                keep_default_na=False, sep=";")
-                df_cliente = temp
+        try:
+            for i in range(1, 5):
+                caminho = f"{ServicePandas.path}\\clients-{i:03d}.csv"
+                if i == 1:
+                    temp = pd.read_csv(caminho, header=0,
+                                    keep_default_na=False, sep=";")
+                    df_cliente = temp
 
-            else:
-                col_name = df_cliente.columns
-                temp = pd.read_csv(caminho, header=None,
-                                keep_default_na=False, sep=";", names=col_name)
-                df_cliente = pd.concat([temp, df_cliente])
+                else:
+                    col_name = df_cliente.columns
+                    temp = pd.read_csv(caminho, header=None,
+                                    keep_default_na=False, sep=";", names=col_name)
+                    df_cliente = pd.concat([temp, df_cliente])
 
-        df_cliente.reset_index()
-        df_cliente.to_csv(f"{ServicePandas.path}\\compilado_clientes.csv",index=False, sep=";")
-        return f"{ServicePandas.path}\\compilado_clientes.csv"
+            df_cliente.reset_index()
+            df_cliente.to_csv(f"{ServicePandas.path}\\compilado_clientes.csv",index=False, sep=";")
+            print("Arquivo compilado de clientes criado com sucesso")
 
+            return f"{ServicePandas.path}\\compilado_clientes.csv"
 
-'''
-  @staticmethod
-  def readDataTransationIn(i, count):
-
-      dir = f"{path}\\transaction-in-{i:03d}.csv"
-
-      while True:
-          count += 1
-          if i == 1:
-              temp = pd.read_csv(dir, header=0, keep_default_na=False, sep=";")
-              df = temp
-          else:
-              col_name = df.columns
-              temp = pd.read_csv(
-                  dir, header=None, keep_default_na=False, sep=";", names=col_name)
-              df = pd.concat([temp, df])
-
-          if exists(dir):
-              readDataTransationIn(i+1, count)
-
-  @staticmethod
-  def readDataTransationOut(i, count):
-
-      dir = f"{path}\\transaction-out-{i:03d}.csv"
-
-      while True:
-          count += 1
-          if i == 1:
-              temp = pd.read_csv(dir, header=0, keep_default_na=False, sep=";")
-              df = temp
-          else:
-              col_name = df.columns
-              temp = pd.read_csv(
-                  dir, header=None, keep_default_na=False, sep=";", names=col_name)
-              df = pd.concat([temp, df])
-          if exists(dir):
-              readDataTransationOut(i+1, count)
-
-  @staticmethod
-  def readDataClient(i, count):
-
-      dir = f"{path}\\clients-{i:03d}.csv"
-
-      while True:
-          count += 1
-          if i == 1:
-              temp = pd.read_csv(dir, header=0, keep_default_na=False, sep=";")
-              df = temp
-          else:
-              col_name = df.columns
-              temp = pd.read_csv(
-                  dir, header=None, keep_default_na=False, sep=";", names=col_name)
-              df2 = pd.concat([temp, df2])
-          if exists(dir):
-              readDataClient(i+1, count)
-
-'''
-    
+        except OSError as err:
+            print("Erro de Sistema Operacional: {0}".format(err))
+        except ValueError:
+            print("Não foi possível fazer a conversão de tipo")
+        except BaseException as err:
+            print(f"Erro inesperado {err=}, {type(err)=}")

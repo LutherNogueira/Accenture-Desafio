@@ -60,7 +60,7 @@ class ServiceODBC():
             print(f"Erro inesperado {err=}, {type(err)=}")
 
     @staticmethod
-    def deleteAllTables(tableName):
+    def deleteAllTables():
         try:
             
             tables = ["TRANSACOES","CLIENTES"]
@@ -72,10 +72,9 @@ class ServiceODBC():
                     sqlcommand=f''' 
                         DELETE FROM {item}; 
                     '''
-                    cursor, conn = ServiceODBC.openConnection()
-                    cursor.execute(sqlcommand)
+                    conn = ServiceODBC.openConnection()
+                    conn.cursor().execute(sqlcommand)
                     conn.commit()
-                    cursor.close()
                     conn.close()
 
                     print(f'Registros da tabela {item} foram apagados com sucesso!' )

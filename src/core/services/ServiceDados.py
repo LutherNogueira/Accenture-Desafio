@@ -1,5 +1,4 @@
 from services.ServicoClienteLocal import ServicoClienteLocal
-from services.ServiceTransacao import ServiceTransacao
 from services.ServicoODBC import ServiceODBC
 from services.ServicoClienteRemoto import ServicoClienteRemoto
 from services.ServicoPandas import ServicePandas
@@ -16,7 +15,7 @@ import pandas as pd
 class ServiceDados:
 
     @staticmethod
-    def carregarDoCSV():
+    def carregareMigrar():
 
         clientes_csv = ServicePandas.readDataCliente()
         cliente_local = ServicoClienteLocal(clientes_csv)
@@ -24,10 +23,12 @@ class ServiceDados:
         transacao_csv = ServicePandas.readDataTransacao()
         transacao_local = ServicoTransacaoLocal(transacao_csv)
 
-        dict_tabelas = {}
+        cliente_remoto = ServicoClienteRemoto(ServiceODBC.openConnection())
+        ServiceDados.migracaoCliente(cliente_local, cliente_remoto)
 
-        dict_tabelas["clientes"] = cliente_local
-        dict_tabelas["transacoes"] = transacao_local
+        transacao_remoto = ServicoTransacaoRemoto(ServiceODBC.openConnection())
+        ServiceDados.migracaoTransacao(transacao_local, transacao_remoto)
+
            
     def migracaoCliente(de:ServicoCliente,para:ServicoCliente):
         clientes = de.ler()
@@ -36,20 +37,6 @@ class ServiceDados:
     def migracaoTransacao(de:ServicoTransacao,para:ServicoTransacao):
         transacoes = de.ler()
         para.escrever(transacoes)
-
-    @staticmethod
-    def apagarDadosCarregados(dict_tabelas):
-        dict_tabelas['clientes'] = None
-        dict_tabelas['transacoes'] = None
-
-        return dict_tabelas
-
-    @staticmethod
-    def Sumarizar(dict_tabelas):
-        print(
-            f'Temos { len(dict_tabelas["clientes"]) } registros na tabela clientes')
-        print(
-            f'Temos { len(dict_tabelas["transaction"]) } registros na tabela transações')
 
     @staticmethod
     def criarTabelasDB():
@@ -65,30 +52,22 @@ class ServiceDados:
         ServiceODBC.deleteAllTables()
 
     @staticmethod
-    def inserirNasTabelasDB(dict_tabelas):
-
-        cliente_remoto = ServicoClienteRemoto(ServiceODBC.openConnection())
-        ServiceDados.migracaoCliente(dict_tabelas['clientes'],cliente_remoto)
-
-
-        transacao_remoto = ServicoTransacaoRemoto(ServiceODBC.openConnection())
-        ServiceDados.migracaoTransacao(dict_tabelas['transacoes'],transacao_remoto)
-
-    @staticmethod
-    def SumarizarDB():
+    def sumarizarDB():
         tabelas = ['CLIENTES', 'TRANSACOES']
 
         try:
-            conn = ServiceODBC.openConnection()
-
             for item in tabelas:
+                conn = ServiceODBC.openConnection()
                 if ServiceODBC.checkIfTableExists(item):
-                    comando_sql = "SELECT id as QTD FROM {item};"
-                    conn.cursor().execute(comando_sql)
+                    comando_sql = f"SELECT count(id) as QTD FROM [dbo].[{item}]"
+                    r =conn.cursor().execute(comando_sql)
+                    row = r.fetchone()
+                    print(f'Na tabela {item} temos {row[0]} registros')
+                        
+                        
+                    conn.close()
+                        
 
-                    linha = conn.cursor().fetchone()
-
-                    print(f'Na tabela {item} temos {linha.QTD} registros')
                 else:
                     print(f"Tabela {item} não existe no banco de dados")
 

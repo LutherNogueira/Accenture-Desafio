@@ -50,7 +50,7 @@ class ServicoTransacaoRemoto(ServicoTransacaoLocal):
                 [transacao.id, transacao.cliente_id, transacao.valor, transacao.data]
             )
             cursor.close()
-            print("Transação: {transacao} inserido com sucesso no banco de dados")
+            print(f"Transação: {transacao.id5} inserido com sucesso no banco de dados")
         except Error as e:
             print(f"Erro ao inserir transacao {transacao} no banco de dados : {str(e)}")
         except OSError as err:
