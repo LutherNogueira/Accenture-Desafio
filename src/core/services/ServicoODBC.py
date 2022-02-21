@@ -11,15 +11,14 @@ class ServiceODBC():
     password =os.getenv('PASSWORD')
 
     @staticmethod
-    def openConection():
+    def openConnection():
         try:
             conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};  \
                                 SERVER='+ServiceODBC.server + ';             \
                                 DATABASE='+ServiceODBC.database+';            \
                                 UID='+ServiceODBC.username+';                  \
                                 PWD=' + ServiceODBC.password)
-            cursor = conn.cursor()
-            return cursor, conn
+            return conn
         except pyodbc.Error as e:
             print(f"Erro ao conectar ao banco de dados : {str(e)}")
 
@@ -36,15 +35,16 @@ class ServiceODBC():
             print(f"Erro ao conectar ao banco de dados : {str(e)}")
             
     @staticmethod
-    def closeConection(cursor: pyodbc.Cursor, conn: pyodbc.Connection):
+    def closeConnection(cursor: pyodbc.Cursor, conn: pyodbc.Connection):
         cursor.close()
         conn.close()
 
     @staticmethod
-    def dropAllTables(tableName):
+    def dropAllTables():
         try:
             
-            tables = [tableName]
+            tables = ["TRANSACOES","CLIENTES"]
+
             
             for item in tables:
                 
@@ -53,10 +53,9 @@ class ServiceODBC():
                     sqlcommand=f''' 
                         DROP TABLE IF EXISTS {item} CASCADE; 
                     '''
-                    cursor, conn =ServiceODBC.openConection()
-                    cursor.execute(sqlcommand)
+                    conn =ServiceODBC.openConnection()
+                    conn.cursor().execute(sqlcommand)
                     conn.commit()
-                    cursor.close()
                     conn.close()
 
                     print(f'Tabela {item} foi apagada com sucesso!' )
@@ -76,7 +75,7 @@ class ServiceODBC():
     def deleteAllTables(tableName):
         try:
             
-            tables = [tableName]
+            tables = ["TRANSACOES","CLIENTES"]
             
             for item in tables:
                 
@@ -85,7 +84,7 @@ class ServiceODBC():
                     sqlcommand=f''' 
                         DELETE FROM {item} CASCADE; 
                     '''
-                    cursor, conn =ServiceODBC.openConection()
+                    cursor, conn = ServiceODBC.openConnection()
                     cursor.execute(sqlcommand)
                     conn.commit()
                     cursor.close()
@@ -107,16 +106,17 @@ class ServiceODBC():
     @staticmethod
     def testConnection():
         try:
-            (cursor, conection) = ServiceODBC.openConection()
+            conexao = ServiceODBC.openConnection()
+            cursor = conexao.cursor()
             if cursor is not None:
-                ServiceODBC.closeConection(cursor, conection)
                 print("Conexão estabelecida com sucesso")
-        except:
-            print("Falha em estabelecer conexão com Banco de Dados")
+                ServiceODBC.closeConnection(cursor,conexao)
+        except pyodbc.Error as e:
+            print(f"Falha em estabelecer conexão com Banco de Dados => {e}")
 
     def checkIfTableExists(table_name):
         try:
-            cursor, conn =ServiceODBC.openConection()
+            conn =ServiceODBC.openConnection()
             
             sqlcommand=f''' 
                 SELECT *
@@ -125,13 +125,11 @@ class ServiceODBC():
                 AND TABLE_NAME = '{table_name}'; 
             '''
 
-            cursor.execute(sqlcommand)
-            if cursor.rowcount == 0:
-                cursor.close()
+            conn.cursor().execute(sqlcommand)
+            if conn.cursor().rowcount == -1:
                 conn.close()
                 return False
             else: 
-                cursor.close()
                 conn.close()
                 return True
             

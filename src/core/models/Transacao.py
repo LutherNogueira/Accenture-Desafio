@@ -1,13 +1,14 @@
 from dataclasses import dataclass
 from datetime import datetime
 from pandas import Timestamp as pd
+from models.Cliente import Cliente
 
 @dataclass
 class Transacao:
     id: int
     cliente_id: int
     valor: float
-    data_cadastro: datetime
+    data: datetime
 
     @classmethod
     def dadoBruto(cls,dado):
@@ -15,5 +16,5 @@ class Transacao:
             id=dado['id'],
             cliente_id=dado['cliente_id'],
             valor=dado['valor'],
-            data_cadastro= str(pd(dado['data_cadastro']).to_pydatetime()),
+            data= str(pd(dado['data']).to_pydatetime()),
         )
