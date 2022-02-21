@@ -1,7 +1,10 @@
-from src.core.services.ServicePandas import ServicePandas
-from src.core.services.ServiceCliente import ServiceCliente
+from glob import glob
+from src.core.services.ServicoClienteLocal import ServicoClienteLocal
 from src.core.services.ServiceTransacao import ServiceTransacao
 from src.core.services.ServiceODBC import ServiceODBC
+from src.core.services.ServicoClienteRemoto import ServicoClienteRemoto
+from src.core.services.ServicePandas import ServicePandas
+from src.core.services.ServicoCliente import ServicoCliente
 from pyodbc import Error
 
 import pandas as pd
@@ -12,22 +15,18 @@ class ServiceDados:
     @staticmethod
     def carregarDoCSV():
 
-       # transaction_in = ServicePandas.readDataTransationIn(1, 1)
-        #transaction_out = ServicePandas.readDataTransationOut(1, 1)
-        clientes = ServicePandas.readDataCliente()
-
-        #transaction = pd.concat([transation_in, transation_out])
-        transacoes = ServicePandas.readDataTransation()
-
-        clientes = ServiceCliente.cadastrar(clientes)
-        transacoes = ServiceTransacao.cadastrar(transacoes, clientes)
-
-        dict_tabelas = {}
-
-        dict_tabelas["clientes"] = clientes
-        dict_tabelas["transacoes"] = transacoes
+        clientes_csv = ServicePandas.readDataCliente()
+        cliente_local = ServicoClienteLocal(clientes_csv)
+        
+        cliente_remoto = ServicoClienteRemoto(ServiceODBC.justConection())
+        ServiceDados.migracao(cliente_local,cliente_remoto)
+       
 
         return dict_tabelas
+    
+    def migracao(de:ServicoCliente,para:ServicoCliente):
+        clientes = de.ler()
+        para.escrever(clientes)
 
     @staticmethod
     def apagarDadosCarregados(dict_tabelas):

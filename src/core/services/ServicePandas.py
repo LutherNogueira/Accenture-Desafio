@@ -52,7 +52,7 @@ class ServicePandas:
                 df_cliente = pd.concat([temp, df_cliente])
 
         df_cliente.reset_index()
-        return df_cliente
+        return df_cliente.to_csv(index=False)
 
 
 '''
