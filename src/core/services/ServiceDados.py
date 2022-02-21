@@ -55,8 +55,8 @@ class ServiceDados:
 
     @staticmethod
     def criarTabelasDB():
-        ServiceCliente.criarTabelas()
-        ServiceTransacao.criarTabelas()
+        ServicoClienteRemoto.createTable()
+        ServicoTransacaoRemoto.createTable()
 
     @staticmethod
     def dropAllTables():
@@ -65,8 +65,8 @@ class ServiceDados:
     @staticmethod
     def inserirNasTabelasDB(dict_tabelas):
 
-        ServiceCliente.inserirDB(dict_tabelas['clientes'])
-        ServiceTransacao.inserirDB(dict_tabelas['transacoes'])
+        ServicoClienteRemoto.insert(dict_tabelas['clientes'])
+        ServicoTransacaoRemoto.insert(dict_tabelas['transacoes'])
 
     @staticmethod
     def SumarizarDB():
