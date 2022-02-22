@@ -4,6 +4,7 @@ from services.ServicoTransacaoLocal import ServicoTransacaoLocal
 from services.ServicoODBC import ServiceODBC
 from pyodbc import Error
 
+#servico transacao remoto esta relacionado com o banco de dados --> por isso seu init recebe uma conexao de BD
 class ServicoTransacaoRemoto(ServicoTransacaoLocal):
     def __init__(self,conexao,tabela='TRANSACOES'):
         self.conexao = conexao
@@ -60,7 +61,8 @@ class ServicoTransacaoRemoto(ServicoTransacaoLocal):
         except BaseException as err:
             print(f"Erro inesperado {err=}, {type(err)=}")
 
-    def escrever(self, transacoes: Iterable[Transacao]):
-        for transacao in transacoes:
+    def escrever(self, transacoes: Iterable[Transacao]): #Iterable[Transacao] --> é o método ler() do transacao_local(que por ter o yield dentro dele se torna do tipo itereable)
+                                                    #e como esse Yield esta guardando nosso transacao, ele é um iterable do tipo transacao
+        for transacao in transacoes:            #for esta sendo feito emcima do método ler da objeto transacao_local
             self.insert(transacao)
         self.conexao.commit()
