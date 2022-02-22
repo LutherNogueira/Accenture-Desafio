@@ -29,7 +29,7 @@ class ServicePandas:
                 col_name = df_transacao.columns
                 if i == 1:
                     temp = pd.read_csv(caminho, header=None, skiprows=1, keep_default_na=False, sep=";", names=col_name)
-
+                    df_transacao = pd.concat([temp, df_transacao])
                 else:
                     col_name = df_transacao.columns
                     temp = pd.read_csv(caminho, header=None,

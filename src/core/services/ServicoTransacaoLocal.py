@@ -7,7 +7,7 @@ from services.ServicoTransacao import ServicoTransacao
 class ServicoTransacaoLocal(ServicoTransacao):
     def __init__(self,arquivo):
         self.arquivo = arquivo
-        self.len = 0
+        self.len=0
 
     def ler(self):
         if not exists(self.arquivo):
@@ -19,7 +19,7 @@ class ServicoTransacaoLocal(ServicoTransacao):
                     try:
                         transacao=Transacao.dadoBruto(linha)
                         yield transacao
-                        self.len +=1
+                        self.len += 1
                     except Exception as erro:
                         raise Exception(f'Erro na linha => {linha} ',erro)
             print(f"Os {self.len} registros das transacoes foram salvos com sucesso")

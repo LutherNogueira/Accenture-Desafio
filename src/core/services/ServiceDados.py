@@ -17,13 +17,13 @@ class ServiceDados:
     @staticmethod
     def carregareMigrar():
 
-        clientes_csv = ServicePandas.readDataCliente()
-        cliente_local = ServicoClienteLocal(clientes_csv)
+        clientes_csv = ServicePandas.readDataCliente() #Service pandas retorna o caminho do novo arquivo CSV que foi compilado
+        cliente_local = ServicoClienteLocal(clientes_csv) #instancia o Service cliente local passando o atributo nome do arquivo
         
-        transacao_csv = ServicePandas.readDataTransacao()
-        transacao_local = ServicoTransacaoLocal(transacao_csv)
+        transacao_csv = ServicePandas.readDataTransacao()#Service pandas retorna o caminho do novo arquivo CSV que foi compilado
+        transacao_local = ServicoTransacaoLocal(transacao_csv)#instancia o Service cliente local passando o atributo nome do arquivo
 
-        cliente_remoto = ServicoClienteRemoto(ServiceODBC.openConnection())
+        cliente_remoto = ServicoClienteRemoto(ServiceODBC.openConnection()) #tem como parametro uma conexao de BD
         ServiceDados.migracaoCliente(cliente_local, cliente_remoto)
 
         transacao_remoto = ServicoTransacaoRemoto(ServiceODBC.openConnection())
@@ -31,9 +31,9 @@ class ServiceDados:
 
            
     def migracaoCliente(de:ServicoCliente,para:ServicoCliente):
-        clientes = de.ler()
-        para.escrever(clientes)
-    
+        clientes = de.ler() #encher nosso yield
+        para.escrever(clientes) #passando nosso objeto do tipo cliente_local que tem o yield com todos os clientes estanciados 
+                            #  para o método escrever do objeto cliente_remoto 
     def migracaoTransacao(de:ServicoTransacao,para:ServicoTransacao):
         transacoes = de.ler()
         para.escrever(transacoes)
@@ -61,8 +61,9 @@ class ServiceDados:
                 if ServiceODBC.checkIfTableExists(item):
                     comando_sql = f"SELECT count(id) as QTD FROM [dbo].[{item}]"
                     r =conn.cursor().execute(comando_sql)
-                    row = r.fetchone()
-                    print(f'Na tabela {item} temos {row[0]} registros')
+                    row = r.fetchone() #trazer uma linha só 
+                    print(f'Na tabela {item} temos {row[0]} registros')  #o row retona mais ou menos nesse formato --> ('AL',    'total',  2013,   4833722.0)
+                                                                        #portanto no azure não da pra acessar pelo nome da coluna, só pela posição
                         
                         
                     conn.close()

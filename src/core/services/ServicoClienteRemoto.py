@@ -3,6 +3,7 @@ from models.Cliente import Cliente
 from services.ServicoClienteLocal import ServicoClienteLocal
 from pyodbc import Error
 
+#servico cliente remoto esta relacionado com o banco de dados --> por isso seu init recebe uma conexao de BD
 class ServicoClienteRemoto(ServicoClienteLocal):
     def __init__(self,conexao,tabela='CLIENTES'):
         self.conexao = conexao
@@ -55,7 +56,8 @@ class ServicoClienteRemoto(ServicoClienteLocal):
         except BaseException as err:
             print(f"Erro inesperado {err=}, {type(err)=}")
 
-    def escrever(self, clientes: Iterable[Cliente]):
-        for cliente in clientes:
+    def escrever(self, clientes: Iterable[Cliente]): #Iterable[Cliente] --> é o método ler() do cliente_local(que por ter o yield dentro dele se torna do tipo itereable)
+                                                        #e como esse Yield esta guardando nosso clientes, ele é um iterable do tipo cliente
+        for cliente in clientes: #for esta sendo feito emcima do método ler da objeto cliente_local 
             self.insert(cliente)
         self.conexao.commit()
