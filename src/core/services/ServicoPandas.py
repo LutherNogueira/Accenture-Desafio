@@ -53,9 +53,8 @@ class ServicePandas:
             for i in range(1, 5):
                 caminho = f"{ServicePandas.path}\\clients-{i:03d}.csv"
                 if i == 1:
-                    temp = pd.read_csv(caminho, header=0,
+                    df_cliente =  pd.read_csv(caminho, header=0,
                                     keep_default_na=False, sep=";")
-                    df_cliente = temp
 
                 else:
                     col_name = df_cliente.columns

@@ -19,15 +19,15 @@ class ServiceDados:
 
         clientes_csv = ServicePandas.readDataCliente() #Service pandas retorna o caminho do novo arquivo CSV que foi compilado
         cliente_local = ServicoClienteLocal(clientes_csv) #instancia o Service cliente local passando o atributo nome do arquivo
+                
+        cliente_remoto = ServicoClienteRemoto(ServiceODBC.openConnection()) #tem como parametro uma conexao de BD
+        ServiceDados.migracaoCliente(de=cliente_local, para=cliente_remoto)
         
         transacao_csv = ServicePandas.readDataTransacao()#Service pandas retorna o caminho do novo arquivo CSV que foi compilado
         transacao_local = ServicoTransacaoLocal(transacao_csv)#instancia o Service cliente local passando o atributo nome do arquivo
 
-        cliente_remoto = ServicoClienteRemoto(ServiceODBC.openConnection()) #tem como parametro uma conexao de BD
-        ServiceDados.migracaoCliente(cliente_local, cliente_remoto)
-
         transacao_remoto = ServicoTransacaoRemoto(ServiceODBC.openConnection())
-        ServiceDados.migracaoTransacao(transacao_local, transacao_remoto)
+        ServiceDados.migracaoTransacao(de = transacao_local,para=transacao_remoto)
 
            
     def migracaoCliente(de:ServicoCliente,para:ServicoCliente):
