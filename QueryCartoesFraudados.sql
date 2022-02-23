@@ -5,7 +5,7 @@ BEGIN
 	DECLARE @proxData datetimeoffset;
 	select @proxData =  MIN(DATA) 
 	from [dbo].[TRANSACOES] 
-	where data > @data and cliente_id = @cliente_id
+	where data > @data and CLIENTE_ID = @cliente_id and VALOR < 0
 	RETURN @proxData;
 END;
 --drop function retornaProximaData
@@ -14,22 +14,39 @@ CREATE FUNCTION fraude(@data datetimeoffset,@data2 datetimeoffset)
 RETURNS varchar(50)
 AS
 BEGIN
-	IF @data is null or @data2 is null
+	IF @data IS NULL OR @data2 IS NULL
 		RETURN 'Falha em analisar'
 	ELSE
-		IF DATEDIFF(second, @data, @data2) <= 120
+		IF DATEDIFF(second, @data, @data2) < 120
 			RETURN 'Fraude'
 		ELSE
 			RETURN 'Transação Comum'
 	RETURN 'Não analisado'
 END;
 
-create view transacoes_status as 
-SELECT id, cliente_id, data,valor, DBO.retornaProximaData(data, cliente_id) as prox, dbo.fraude(data, DBO.retornaProximaData(data, cliente_id) ) as Status
-from transacoes;
+CREATE VIEW TRANSACOES_STATUS AS 
+SELECT  ID, 
+		CLIENTE_ID, 
+		DATA,
+		VALOR, 
+		DBO.retornaProximaData(DATA, cliente_id) as DATA_COMPARADA, 
+		dbo.fraude(DATA, DBO.retornaProximaData(DATA, cliente_id) ) AS STATUS
+FROM TRANSACOES
+WHERE VALOR < 0;
 
-select distinct cliente_id, c.nome from transacoes_status ts
-left join CLIENTES c on c.id = ts.cliente_id
-where status = 'Fraude'
+SELECT DISTINCT CLIENTE_ID, 
+				C.NOME 
+FROM TRANSACOES_STATUS TS
+INNER JOIN CLIENTES c on c.id = ts.cliente_id
+WHERE STATUS = 'Fraude';  --Retorna o id e nome dos cliente que sofreram fraude
 
-
+SELECT DISTINCT T.CLIENTE_ID, 
+				C.NOME, 	
+				COUNT(T.ID) AS TRANSACOES , 
+				COUNT(CASE WHEN STATUS = 'Fraude' THEN 1 END ) as TRANSACOES_FRAUDE
+FROM TRANSACOES T
+LEFT JOIN TRANSACOES_STATUS TS ON TS.ID = T.ID
+INNER JOIN CLIENTES C on C.ID = TS.CLIENTE_ID
+WHERE T.VALOR < 0 
+GROUP BY T.cliente_id, C.NOME
+ORDER BY T.CLIENTE_ID;  --Retorna o id e nome de todos os clientes e informa a qtd de transacoes deles e quantas são fraude
