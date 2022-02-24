@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from pandas import Timestamp as pd
+from pandas import Timestamp
 from models.Cliente import Cliente
 
 @dataclass
@@ -16,5 +16,5 @@ class Transacao:
             id=dado['id'],
             cliente_id=dado['cliente_id'],
             valor=dado['valor'],
-            data= str(pd(dado['data']).to_pydatetime()),
+            data= str(Timestamp(dado['data']).to_pydatetime()),
         )

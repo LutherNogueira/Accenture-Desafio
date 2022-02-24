@@ -20,14 +20,14 @@ class ServiceDados:
         clientes_csv = ServicePandas.readDataCliente()
         cliente_local = ServicoClienteLocal(clientes_csv)
         
+        cliente_remoto = ServicoClienteRemoto(ServiceODBC.openConnection())
+        ServiceDados.migracaoCliente(de = cliente_local, para = cliente_remoto)
+        
         transacao_csv = ServicePandas.readDataTransacao()
         transacao_local = ServicoTransacaoLocal(transacao_csv)
 
-        cliente_remoto = ServicoClienteRemoto(ServiceODBC.openConnection())
-        ServiceDados.migracaoCliente(cliente_local, cliente_remoto)
-
         transacao_remoto = ServicoTransacaoRemoto(ServiceODBC.openConnection())
-        ServiceDados.migracaoTransacao(transacao_local, transacao_remoto)
+        ServiceDados.migracaoTransacao(de = transacao_local, para = transacao_remoto)
 
            
     def migracaoCliente(de:ServicoCliente,para:ServicoCliente):
@@ -37,7 +37,7 @@ class ServiceDados:
     def migracaoTransacao(de:ServicoTransacao,para:ServicoTransacao):
         transacoes = de.ler()
         para.escrever(transacoes)
-
+    
     @staticmethod
     def criarTabelasDB():
         

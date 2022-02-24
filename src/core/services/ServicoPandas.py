@@ -5,73 +5,54 @@ from os.path import exists
 
 class ServicePandas:
 
-    path = os.path.abspath("..\..\src\\db")
+    path = os.path.abspath("files")
+    header = None
+
+    @staticmethod
+    def lerPandas(i, tipo, df):
+        try: 
+            i+=1
+            caminho = f"{tipo}{i:03d}.csv"
+            if exists(caminho) and df is None:
+                return ServicePandas.lerPandas(i,tipo, pd.read_csv(caminho, header=0,
+                                    keep_default_na=False, sep=';'))
+            elif exists(caminho):
+                col_name = df.columns
+                return ServicePandas.lerPandas(i,tipo, pd.concat([pd.read_csv(caminho, header=None,
+                                    keep_default_na=False, sep=";", names=col_name), df]))
+            else:
+                return df
+        except OSError as err:
+            print("Erro de Sistema Operacional: {0}".format(err))
+        except ValueError:
+            print("Não foi possível fazer a conversão de tipo")
+        except BaseException as err:
+            print(f"Erro inesperado {err=}, {type(err)=}")
+            
     @staticmethod
     def readDataTransacao():
-        try: 
-            for i in range(1, 10):
-                caminho = f"{ServicePandas.path}\\transaction-in-{i:03d}.csv"
+        caminho = f"{ServicePandas.path}\\transaction-in-"
+        transacoes_in = ServicePandas.lerPandas(0,caminho, None)
 
-                if i == 1:
-                    temp = pd.read_csv(caminho, header=0,
-                                        keep_default_na=False, sep=";")
-                    df_transacao = temp
+        caminho = f"{ServicePandas.path}\\transaction-out-"
+        transacoes_out = ServicePandas.lerPandas(0,caminho, None)
 
-                else:
-                    col_name = df_transacao.columns
-                    temp = pd.read_csv(caminho, header=None,
-                                        keep_default_na=False, sep=";", names=col_name)
-                    df_transacao = pd.concat([temp, df_transacao])
+        df_transacao = pd.concat([transacoes_in, transacoes_out])
+        df_transacao.reset_index()
+        df_transacao.to_csv(f"{ServicePandas.path}\\compilado_transacoes.csv",index=False, sep=";")
 
+        print("Arquivo compilado de transações criado com sucesso")
 
-            for i in range(1, 64):
-                caminho = f"{ServicePandas.path}\\transaction-out-{i:03d}.csv"
-                col_name = df_transacao.columns
-                if i == 1:
-                    temp = pd.read_csv(caminho, header=None, skiprows=1, keep_default_na=False, sep=";", names=col_name)
-
-                else:
-                    col_name = df_transacao.columns
-                    temp = pd.read_csv(caminho, header=None,
-                                    keep_default_na=False, sep=";", names=col_name)
-                    df_transacao = pd.concat([temp, df_transacao])
-            df_transacao.reset_index()
-            df_transacao.to_csv(f"{ServicePandas.path}\\compilado_transacoes.csv",index=False, sep=";")
-
-            print("Arquivo compilado de transações criado com sucesso")
-
-            return f"{ServicePandas.path}\\compilado_transacoes.csv"
-        except OSError as err:
-            print("Erro de Sistema Operacional: {0}".format(err))
-        except ValueError:
-            print("Não foi possível fazer a conversão de tipo")
-        except BaseException as err:
-            print(f"Erro inesperado {err=}, {type(err)=}")
-
+        return f"{ServicePandas.path}\\compilado_transacoes.csv"
+    @staticmethod
     def readDataCliente():
-        try:
-            for i in range(1, 5):
-                caminho = f"{ServicePandas.path}\\clients-{i:03d}.csv"
-                if i == 1:
-                    temp = pd.read_csv(caminho, header=0,
-                                    keep_default_na=False, sep=";")
-                    df_cliente = temp
+        caminho = f"{ServicePandas.path}\\clients-"
+        df_cliente = ServicePandas.lerPandas(0, caminho,None)
+        type(df_cliente)
+        print(df_cliente)
+        df_cliente.reset_index()
+        df_cliente.to_csv(f"{ServicePandas.path}\\compilado_clientes.csv",index=False, sep=";")
 
-                else:
-                    col_name = df_cliente.columns
-                    temp = pd.read_csv(caminho, header=None,
-                                    keep_default_na=False, sep=";", names=col_name)
-                    df_cliente = pd.concat([temp, df_cliente])
+        print("Arquivo compilado de clientes criado com sucesso")
 
-            df_cliente.reset_index()
-            df_cliente.to_csv(f"{ServicePandas.path}\\compilado_clientes.csv",index=False, sep=";")
-            print("Arquivo compilado de clientes criado com sucesso")
-
-            return f"{ServicePandas.path}\\compilado_clientes.csv"
-
-        except OSError as err:
-            print("Erro de Sistema Operacional: {0}".format(err))
-        except ValueError:
-            print("Não foi possível fazer a conversão de tipo")
-        except BaseException as err:
-            print(f"Erro inesperado {err=}, {type(err)=}")
+        return f"{ServicePandas.path}\\compilado_clientes.csv"

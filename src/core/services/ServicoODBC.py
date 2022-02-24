@@ -23,11 +23,6 @@ class ServiceODBC():
             print(f"Erro ao conectar ao banco de dados : {str(e)}")
   
     @staticmethod
-    def closeConnection(cursor: pyodbc.Cursor, conn: pyodbc.Connection):
-        cursor.close()
-        conn.close()
-
-    @staticmethod
     def dropAllTables():
         try:
             
@@ -39,7 +34,7 @@ class ServiceODBC():
                 if ServiceODBC.checkIfTableExists(item):
 
                     sqlcommand=f''' 
-                        DROP TABLE IF EXISTS {item}; 
+                        DROP TABLE IF EXISTS {item} CASCADE; 
                     '''
                     conn =ServiceODBC.openConnection()
                     conn.cursor().execute(sqlcommand)
@@ -97,7 +92,7 @@ class ServiceODBC():
             cursor = conexao.cursor()
             if cursor is not None:
                 print("Conexão estabelecida com sucesso")
-                ServiceODBC.closeConnection(cursor,conexao)
+                conexao.close()
         except pyodbc.Error as e:
             print(f"Falha em estabelecer conexão com Banco de Dados => {e}")
 
