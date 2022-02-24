@@ -9,7 +9,7 @@ BEGIN
 	RETURN @proxData;
 END;
 --drop function retornaProximaData
---oi
+
 CREATE FUNCTION fraude(@data datetimeoffset,@data2 datetimeoffset)
 RETURNS varchar(50)
 AS
@@ -29,15 +29,15 @@ SELECT  ID,
 		CLIENTE_ID, 
 		DATA,
 		VALOR, 
-		DBO.retornaProximaData(DATA, cliente_id) as DATA_COMPARADA, 
-		dbo.fraude(DATA, DBO.retornaProximaData(DATA, cliente_id) ) AS STATUS
+		DBO.retornaProximaData(DATA, CLIENTE_ID) as DATA_COMPARADA, 
+		dbo.fraude(DATA, DBO.retornaProximaData(DATA, CLIENTE_ID) ) AS STATUS
 FROM TRANSACOES
 WHERE VALOR < 0;
 
 SELECT DISTINCT CLIENTE_ID, 
 				C.NOME 
 FROM TRANSACOES_STATUS TS
-INNER JOIN CLIENTES c on c.id = ts.cliente_id
+INNER JOIN CLIENTES c on C.ID = TS.CLIENTE_ID
 WHERE STATUS = 'Fraude';  --Retorna o id e nome dos cliente que sofreram fraude
 
 SELECT DISTINCT T.CLIENTE_ID, 

@@ -2,3 +2,10 @@
 __pycache__/
 Lib/
 Scripts/
+src/db/
+Include/
+Pipfile
+Pipfile.lock
+*.pyi
+*.cfg
+*.csv
