@@ -2,7 +2,6 @@ import pandas as pd
 import os
 from os.path import exists
 
-
 class ServicePandas:
 
     path = os.path.abspath("files")
@@ -28,7 +27,7 @@ class ServicePandas:
             print("Não foi possível fazer a conversão de tipo")
         except BaseException as err:
             print(f"Erro inesperado {err=}, {type(err)=}")
-            
+
     @staticmethod
     def readDataTransacao():
         caminho = f"{ServicePandas.path}\\transaction-in-"

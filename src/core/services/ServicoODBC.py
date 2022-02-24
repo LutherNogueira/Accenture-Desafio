@@ -34,7 +34,7 @@ class ServiceODBC():
                 if ServiceODBC.checkIfTableExists(item):
 
                     sqlcommand=f''' 
-                        DROP TABLE IF EXISTS {item} CASCADE; 
+                        DROP TABLE IF EXISTS {item}; 
                     '''
                     conn =ServiceODBC.openConnection()
                     conn.cursor().execute(sqlcommand)
