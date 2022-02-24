@@ -19,20 +19,19 @@ if __name__ == "__main__":
 
         opcao = int(input())
 
-        match opcao:
-            case 1:  # Conectar banco de dados
-                ServiceODBC.testConnection()
-            case 2:  # Criar estruturas de tabela
-                ServiceDados.criarTabelasDB()
-            case 3: # Apagar todos as tabelas do Banco de dados
-                ServiceODBC.dropAllTables()
-            case 4:  # Carregar dados do CSV
-                 ServiceDados.carregareMigrar()
-            case 5:  # Sumarizar dados salvos no Banco de dados
-                ServiceDados.sumarizarDB()
-            case 6:  # Apagar todos os dados do Banco de dados
-                ServiceODBC.deleteAllTables()
-            case 7:
-                break
-            case _:
-                print("\nOpção inválida\n")
+        if opcao == 1:  # Conectar banco de dados
+            ServiceODBC.testConnection()
+        elif opcao == 2:  # Criar estruturas de tabela
+            ServiceDados.criarTabelasDB()
+        elif opcao == 3: # Apagar todos as tabelas do Banco de dados
+            ServiceODBC.dropAllTables()
+        elif opcao == 4:  # Carregar dados do CSV
+             ServiceDados.carregareMigrar()
+        elif opcao == 5:  # Sumarizar dados salvos no Banco de dados
+            ServiceDados.sumarizarDB()
+        elif opcao == 6:  # Apagar todos os dados do Banco de dados
+            ServiceODBC.deleteAllTables()
+        elif opcao == 7:
+            break
+        else:
+            print("\nOpção inválida\n")
