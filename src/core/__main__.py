@@ -40,7 +40,7 @@ if __name__ == "__main__":
             print(" id: int \n cliente_id: int \n valor: float \n data: datetimeoffset\n")
             
             print("Atenção:\n- O formato deve ser csv separado por ponto e vírgula. \n- O header deve constar somente no primeiro arquivo \n")
-            print("Nome do arquivo: (O xxx deve ser substituido pelo número do arquivo. Iniciando obrigatóriamente em 001)\n - Cliente: clients-xxx.csv\n - Transacao IN: transaction-in-xxx.csv\n - Transacao IN: transaction-out-xxx.csv")
+            print("Nome do arquivo: (O xxx deve ser substituido pelo número do arquivo. Iniciando obrigatóriamente em 001)\n - Cliente: clients-xxx.csv\n - Transacao IN: transaction-in-xxx.csv\n - Transacao OUT: transaction-out-xxx.csv")
         elif opcao == 8:
             break
         else:
