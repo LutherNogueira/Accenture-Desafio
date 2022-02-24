@@ -3,9 +3,9 @@ RETURNS datetimeoffset
 AS
 BEGIN
 	DECLARE @proxData datetimeoffset;
-	select @proxData =  MIN(DATA) 
-	from [dbo].[TRANSACOES] 
-	where data > @data and CLIENTE_ID = @cliente_id and VALOR < 0
+	SELECT @proxData =  MIN(DATA) 
+	FROM [dbo].[TRANSACOES] 
+	WHERE DATA > @data and CLIENTE_ID = @cliente_id and VALOR < 0
 	RETURN @proxData;
 END;
 --drop function retornaProximaData
