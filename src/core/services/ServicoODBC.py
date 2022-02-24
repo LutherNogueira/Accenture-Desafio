@@ -96,6 +96,7 @@ class ServiceODBC():
         except pyodbc.Error as e:
             print(f"Falha em estabelecer conexão com Banco de Dados => {e}")
 
+    @staticmethod
     def checkIfTableExists(table_name):
         try:
             conn =ServiceODBC.openConnection()

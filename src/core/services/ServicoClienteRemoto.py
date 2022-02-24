@@ -2,6 +2,7 @@ from typing import Iterable
 from models.Cliente import Cliente
 from services.ServicoClienteLocal import ServicoClienteLocal
 from pyodbc import Error
+from services.ServicoODBC import ServiceODBC
 
 class ServicoClienteRemoto(ServicoClienteLocal):
     def __init__(self,conexao,tabela='CLIENTES'):
@@ -56,6 +57,9 @@ class ServicoClienteRemoto(ServicoClienteLocal):
             print(f"Erro inesperado {err=}, {type(err)=}")
 
     def escrever(self, clientes: Iterable[Cliente]):
-        for cliente in clientes:
-            self.insert(cliente)
-        self.conexao.commit()
+        if ServiceODBC.checkIfTableExists(self.tabela):
+            for cliente in clientes:
+                self.insert(cliente)
+            self.conexao.commit()
+        else:
+            print(f"Dados de transação não foram salvos no Banco de Dados porque tabela {self.tabela} não existe")

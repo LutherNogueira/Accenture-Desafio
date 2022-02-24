@@ -4,7 +4,7 @@ from os.path import exists
 
 class ServicePandas:
 
-    path = os.path.abspath("files")
+    path = os.path.abspath("./files")
     header = None
 
     @staticmethod
@@ -30,28 +30,36 @@ class ServicePandas:
 
     @staticmethod
     def readDataTransacao():
-        caminho = f"{ServicePandas.path}\\transaction-in-"
+        caminho = f"{ServicePandas.path}/transaction-in-"
         transacoes_in = ServicePandas.lerPandas(0,caminho, None)
 
-        caminho = f"{ServicePandas.path}\\transaction-out-"
+        caminho = f"{ServicePandas.path}/transaction-out-"
         transacoes_out = ServicePandas.lerPandas(0,caminho, None)
 
-        df_transacao = pd.concat([transacoes_in, transacoes_out])
-        df_transacao.reset_index()
-        df_transacao.to_csv(f"{ServicePandas.path}\\compilado_transacoes.csv",index=False, sep=";")
+        if transacoes_in is not None and transacoes_out is not None:
+            df_transacao = pd.concat([transacoes_in, transacoes_out])
+            df_transacao.reset_index()
+            df_transacao.to_csv(f"{ServicePandas.path}/compilado_transacoes.csv",index=False, sep=";")
 
-        print("Arquivo compilado de transações criado com sucesso")
+            print("Arquivo compilado de transações criado com sucesso")
 
-        return f"{ServicePandas.path}\\compilado_transacoes.csv"
+            return f"{ServicePandas.path}/compilado_transacoes.csv"
+        else:
+            print("Falha em juntar arquivos.")
+            return ""
     @staticmethod
     def readDataCliente():
-        caminho = f"{ServicePandas.path}\\clients-"
+        caminho = f"{ServicePandas.path}/clients-"
+        
         df_cliente = ServicePandas.lerPandas(0, caminho,None)
-        type(df_cliente)
-        print(df_cliente)
-        df_cliente.reset_index()
-        df_cliente.to_csv(f"{ServicePandas.path}\\compilado_clientes.csv",index=False, sep=";")
+        if df_cliente is not None:
 
-        print("Arquivo compilado de clientes criado com sucesso")
+            df_cliente.reset_index()
+            df_cliente.to_csv(f"{ServicePandas.path}/compilado_clientes.csv",index=False, sep=";")
 
-        return f"{ServicePandas.path}\\compilado_clientes.csv"
+            print("Arquivo compilado de clientes criado com sucesso")
+
+            return f"{ServicePandas.path}/compilado_clientes.csv"
+        else:
+            print("Falha em juntar arquivos.")
+            return ""

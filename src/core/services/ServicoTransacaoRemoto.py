@@ -61,6 +61,9 @@ class ServicoTransacaoRemoto(ServicoTransacaoLocal):
             print(f"Erro inesperado {err=}, {type(err)=}")
 
     def escrever(self, transacoes: Iterable[Transacao]):
-        for transacao in transacoes:
-            self.insert(transacao)
-        self.conexao.commit()
+        if ServiceODBC.checkIfTableExists(self.tabela):
+            for transacao in transacoes:
+                self.insert(transacao)
+            self.conexao.commit()
+        else:
+            print(f"Dados de transação não foram salvos no Banco de Dados porque tabela {self.tabela} não existe")
